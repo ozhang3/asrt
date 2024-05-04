@@ -1,0 +1,7 @@
+#ifndef B90399E8_FA62_4DC4_A274_0F16C21E0271
+#define B90399E8_FA62_4DC4_A274_0F16C21E0271
+
+namespace ReactorNS{
+    class EpollReactor;
+}
+#endif /* B90399E8_FA62_4DC4_A274_0F16C21E0271 */

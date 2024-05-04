@@ -1,0 +1,102 @@
+===============================================================================
+EXTENSION NAME : linecount
+EXTENSION VERSION : 0.1.7
+-------------------------------------------------------------------------------
+count time : 2024-04-27 15:35:38
+count workspace : /home/bsg/snx3ua/libdiag/lib/asrt
+total files : 90
+total code lines : 11457
+total comment lines : 2091
+total blank lines : 2751
+
+asrt.hpp, code is 34, comment is 1, blank is 11.
+callstack.hpp, code is 47, comment is 15, blank is 10.
+client_server/client_interface.hpp, code is 47, comment is 15, blank is 21.
+client_server/common_types.hpp, code is 8, comment is 0, blank is 4.
+client_server/connection.hpp, code is 509, comment is 32, blank is 80.
+client_server/impl/client_interface.ipp, code is 78, comment is 4, blank is 16.
+client_server/impl/server_interface.ipp, code is 155, comment is 15, blank is 20.
+client_server/internal/client_message_handler.hpp, code is 20, comment is 0, blank is 6.
+client_server/internal/server_message_handler.hpp, code is 20, comment is 0, blank is 6.
+client_server/message.h, code is 284, comment is 9, blank is 66.
+client_server/message_queue.hpp, code is 67, comment is 0, blank is 12.
+client_server/server_interface.hpp, code is 69, comment is 20, blank is 35.
+common_incl.hpp, code is 13, comment is 0, blank is 2.
+common_types.hpp, code is 33, comment is 0, blank is 10.
+concepts.hpp, code is 9, comment is 0, blank is 6.
+config.hpp, code is 108, comment is 26, blank is 20.
+details/registry.hpp, code is 55, comment is 21, blank is 17.
+details/static_vector.hpp, code is 255, comment is 11, blank is 56.
+error_code.hpp, code is 183, comment is 100, blank is 93.
+executor/details.hpp, code is 60, comment is 1, blank is 27.
+executor/executable.hpp, code is 17, comment is 0, blank is 5.
+executor/executor_config.hpp, code is 8, comment is 30, blank is 8.
+executor/executor_generic.hpp, code is 69, comment is 4, blank is 25.
+executor/executor_interface.hpp, code is 16, comment is 0, blank is 11.
+executor/executor_task.hpp, code is 73, comment is 1, blank is 24.
+executor/executor_work_guard.hpp, code is 15, comment is 0, blank is 4.
+executor/impl/io_executor.ipp, code is 335, comment is 29, blank is 63.
+executor/impl/strand.ipp, code is 87, comment is 17, blank is 15.
+executor/io_executor.hpp, code is 261, comment is 176, blank is 78.
+executor/io_executor_fwd.hpp, code is 7, comment is 0, blank is 2.
+executor/strand.hpp, code is 52, comment is 1, blank is 15.
+executor/timed_task.hpp, code is 9, comment is 2, blank is 4.
+executor/types.hpp, code is 15, comment is 0, blank is 5.
+impl/asrt_impl.hpp, code is 3, comment is 0, blank is 2.
+impl/src.hpp, code is 17, comment is 2, blank is 8.
+ip/tcp.hpp, code is 37, comment is 1, blank is 10.
+netbuffer.hpp, code is 332, comment is 12, blank is 75.
+netbuffer_fwd.hpp, code is 7, comment is 0, blank is 2.
+pch.hpp, code is 28, comment is 0, blank is 3.
+pch.hpp.gch, it is a binary file.
+reactor/epoll_reactor.hpp, code is 758, comment is 195, blank is 178.
+reactor/epoll_reactor_fwd.hpp, code is 6, comment is 0, blank is 1.
+reactor/io_uring_reactor.hpp, code is 3, comment is 0, blank is 2.
+reactor/null_reactor.hpp, code is 10, comment is 0, blank is 4.
+reactor/reactor_interface.hpp, code is 125, comment is 46, blank is 34.
+reactor/reactor_proxy.hpp, code is 36, comment is 0, blank is 28.
+reactor/types.hpp, code is 271, comment is 7, blank is 57.
+ring_buffer_view.hpp, code is 22, comment is 0, blank is 15.
+signalset/basic_signalset.hpp, code is 112, comment is 46, blank is 40.
+signalset/impl/basic_signalset.ipp, code is 244, comment is 8, blank is 27.
+signalset/signal_set_base.hpp, code is 5, comment is 0, blank is 3.
+socket/acceptor.hpp, code is 238, comment is 8, blank is 48.
+socket/address.hpp, code is 89, comment is 2, blank is 20.
+socket/address_types.hpp, code is 91, comment is 10, blank is 22.
+socket/address_v4.hpp, code is 144, comment is 32, blank is 31.
+socket/address_v6.hpp, code is 127, comment is 6, blank is 34.
+socket/async_operation.hpp, code is 239, comment is 44, blank is 40.
+socket/basic_endpoint.hpp, code is 56, comment is 11, blank is 18.
+socket/basic_packet_socket.hpp, code is 381, comment is 61, blank is 105.
+socket/basic_socket.hpp, code is 603, comment is 130, blank is 120.
+socket/basic_stream_socket.hpp, code is 535, comment is 147, blank is 114.
+socket/datagram_socket.hpp, code is 283, comment is 33, blank is 61.
+socket/impl/acceptor_socket.ipp, code is 172, comment is 11, blank is 25.
+socket/impl/packet_socket.ipp, code is 328, comment is 27, blank is 69.
+socket/impl/stream_socket.ipp, code is 124, comment is 9, blank is 16.
+socket/internet_endpoint.hpp, code is 188, comment is 9, blank is 28.
+socket/packet_endpoint.hpp, code is 87, comment is 16, blank is 18.
+socket/protocol.hpp, code is 165, comment is 31, blank is 37.
+socket/protocol_fwd.hpp, code is 11, comment is 0, blank is 4.
+socket/socket_base.hpp, code is 42, comment is 4, blank is 13.
+socket/socket_option.hpp, code is 58, comment is 22, blank is 13.
+socket/stream_socket_fwd.hpp, code is 7, comment is 0, blank is 2.
+socket/types.hpp, code is 203, comment is 4, blank is 35.
+socket/unix_domain_endpoint.hpp, code is 96, comment is 3, blank is 25.
+socket/unix_socket.hpp, code is 116, comment is 7, blank is 25.
+sys/epoll_wrapper.hpp, code is 132, comment is 10, blank is 25.
+sys/io_uring_wrapper.hpp, code is 7, comment is 0, blank is 11.
+sys/syscall.hpp, code is 761, comment is 355, blank is 181.
+thread_pool/static_thread_pool.hpp, code is 85, comment is 2, blank is 26.
+timer/basic_timer.hpp, code is 137, comment is 60, blank is 44.
+timer/null_timer.hpp, code is 10, comment is 0, blank is 5.
+timer/steady_timer.hpp, code is 12, comment is 0, blank is 4.
+timer/timer_queue.hpp, code is 344, comment is 120, blank is 81.
+timer/timer_types.hpp, code is 19, comment is 0, blank is 7.
+timer/timer_util.hpp, code is 73, comment is 33, blank is 23.
+type_traits.hpp, code is 172, comment is 5, blank is 86.
+unix/packet.hpp, code is 21, comment is 0, blank is 9.
+unix/unix_domain.hpp, code is 32, comment is 1, blank is 10.
+user_format.hpp, code is 80, comment is 16, blank is 17.
+util.hpp, code is 155, comment is 15, blank is 33.
+===============================================================================
