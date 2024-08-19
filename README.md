@@ -4,21 +4,23 @@
 `ASRT` is a header-only C++ **concurrency/networking** library that makes writing performant and safe embedded applications a breeze.  Implementations of a task scheduler and C++ abstractions for posix objects like sockets and pipes are provided out of the box. If you are comfortable with C++11 or above and have written networking applications, you are good to go! No more awkward wrappers over raw system calls and manual event loops in your otherwise structured (I hope) C++ program. 
 
 ## Table of Contents
-* [Why Another Task Scheduling Library?](#111)
-* [Architecture Overview](#111)
-* [Using the library](#111)
-* [Task Scheduling](#222)
-	* [The Executor](#222)
-* [Os Abstractions](#222)
-	* [Synchronous Socket I/O](#111)
-	* [Asynchronous Socket I/O](#111)
-	* [The Reactor](#111)
-	*  [Synchronous Signal Handling](#111)
-* [Client Server Interfaces](#222)
-	* [Asynchronous Tcp Client](#111)
-	* [Asynchronous Udp Server](#111)
-* [Using the Library](#222)
-	
+* [Why Another Task Scheduling Library?](#why-another-task-scheduling-library)
+* [Architecture Overview](#architecture-overview)
+	* [Os Abstraction](#os-abtstraction)
+	* [Asynchrony/Concurrency](#asynchronyconcurrency)
+	* [Application Prototypes](#application-prototypes)
+* [Task Scheduling](#task-scheduling)
+	* [The Executor](#the-executor)
+	* [Executor Work Guard](#executor-work-guard)
+* [Os Abstractions](#os-abstractions)
+	* [Synchronous Socket I/O](#synchronous-socket-io)
+	* [Asynchronous Socket I/O](#asynchronous-socket-io)
+	* [The Reactor](#the-reactor)
+	* [Synchronous Signal Handling](#synchronous-signal-handling)
+* [Client Server Interfaces](#client-server-interfaces)
+	* [Asynchronous Tcp Client](#asynchronous-tcp-client)
+	* [Asynchronous Udp Server](#asynchronous-udp-server)
+* [Using the Library](#using-the-library)
 
 ## Why Another Task Scheduling Library?
 
@@ -26,7 +28,7 @@ Although task libraries abound in C++, with [Boost::Asio](https://github.com/boo
 
 The design objectives of ASRT are as follows:
 
- - **Safety**. Safety always comes first in embedded applications. The ability of a piece of software to correctly function for extended periods of time without crashing or stalling is especially criticial In fields such as medical equipments and autonomous vehicles. `ASRT` is designed with a robust error handling and tracing mechanism. Users are shielded from directly interacting with the operation system. We use RAII abstractions over raw system resources whenever possible. All systems calls are traceable and systems erros are never ignored (either internally handled or passed on to the user). The library does not start or manage any threads whatsoever and that responsibility is left solely to the user. [**Synchronous signal handling**](#111)  is supported (with kernel verison > Linux 2.6.22) so that signals are handled gracefully and do not disrupt the normal program flow.
+ - **Safety**. Safety always comes first in embedded applications. The ability of a piece of software to correctly function for extended periods of time without crashing or stalling is especially criticial In fields such as medical equipments and autonomous vehicles. `ASRT` is designed with a robust error handling and tracing mechanism. Users are shielded from directly interacting with the operation system. We use RAII abstractions over raw system resources whenever possible. All systems calls are traceable and systems erros are never ignored (either internally handled or passed on to the user). The library does not start or manage any threads whatsoever and that responsibility is left solely to the user. [**Synchronous signal handling**](#synchronous-signal-handling)  is supported (with kernel verison > Linux 2.6.22) so that signals are handled gracefully and do not disrupt the normal program flow.
  
  - **Performance**.  We understand the importance of performance to any C++ programmer ; ) As modern embedded applications become increasingly complex and increasingly inter-connected, the need for an efficient and low-latency task schedulign and networking framework is criticial is ever more important. Throughout the entire framework,  expensive operations such as virtual function callss and dynamic allocations are avoided whenever posssible. **Compile-time computations** are preferred over run-time ones. **Static polymorphism** are utilised in place of run-time polymorphism. Use zero-cost/low-cost abstractions whenever possible. Benchmarks are regularly executed on differnt platforms and with differnt compilers. 
  
@@ -37,9 +39,9 @@ The design objectives of ASRT are as follows:
 
 
 ## Architecture Overview
-The core components of the ASRT library can be logically grouped into three layers. 
+The core components of the `ASRT` library can be logically grouped into three layers. 
 
-![ASRT Core Componets](https://private-user-images.githubusercontent.com/68801845/358845015-832c7ace-844c-41bd-b91e-91c7e1719020.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjM5NjIxNzQsIm5iZiI6MTcyMzk2MTg3NCwicGF0aCI6Ii82ODgwMTg0NS8zNTg4NDUwMTUtODMyYzdhY2UtODQ0Yy00MWJkLWI5MWUtOTFjN2UxNzE5MDIwLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA4MTglMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwODE4VDA2MTc1NFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWQ3ZDc2YTgzMTU1NjFlNWQyMTc0NDA5YWFmZDc5OTgwOGZhNzFhZjU4OGE3NWRkN2VmODIxODIxYTEzZWRmYTkmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.zBIcKT_ngG-5pfFShOpIGMHNwwwC6P7zN2ZNN2SLQks)
+![ASRT Core Componets](artifacts/components_view.png)
 
 ### Os Abtstraction
 At the very bottom, there is the *Os Abtstraction* layer that implements abstractions towards APIs/objects provided by or used to interact with the operation system. ASRT implements abstractions over communication objects such as `asrt::BasicSocket` and `asrt::BasicNamedPipe` on top of their posix equivalents. Another core component in this layer is the `asrt::Reactor` abstraction, which implemenmts the [reactor design pattern](https://en.wikipedia.org/wiki/Reactor_pattern). A reactor is a device that encapasulates a dedicated event loop that repeatedly calls `poll()`, `epoll_wait()`or `io_uring_enter()`and dispatches the reaped i/o events from those calls. Without native support on Linux for asynchronous i/o such as that provided by Window's overlapped i/o, a reactor is needed to emulate asynchrony. All ASRT i/o objects such as `asrt::BasicStreamSocket` and `asrt::BasicNamedPipe` support asynchronous i/o through underlying reactor. 
@@ -74,7 +76,7 @@ int main(int argc, const char* argv[])
     // schedule the lambda for delayed execution
     int const answer = 42;
     asrt::post_deferred([answer](){
-	    std::cout << "The answer is " << answer << "\n";
+		std::cout << "The answer is " << answer << "\n";
     }, 42ms);
 
     // schedule function for periodic execution
