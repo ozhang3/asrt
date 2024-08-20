@@ -17,10 +17,12 @@ int main() {
 	auto cpmposed_task = asrt::Task{[] {
 		std::cout << "Task 1 executed." << std::endl;
 		return 42;
-	}).then([](int value) {
+	})
+	| then([](int value) {
 		std::cout << "Task 2 executed with value: " << value << std::endl;
 		return value * 2;
-	}).then([](int value) {
+	})
+	| then([](int value) {
 		std::cout << "Task 3 executed with value: " << value << std::endl;
 	}};
 
@@ -42,7 +44,10 @@ Please refer to the [Task Composition](#task-composition) section for a detailed
 	* [Asynchrony/Concurrency](#asynchronyconcurrency)
 	* [Application Prototypes](#application-prototypes)
 * [Task Scheduling](#task-scheduling)
-	* [Task Composition](#task-composition)
+* [Task Composition](#task-composition)
+ 	* [Understanding Task Composability](#undestanding-task-composability) 
+ 	* [Task Dependencies](#task-dependencies)
+   	* [Building Compile-Time Call Graphs](#building-compiletime-call-graphs)
 	* [The Executor](#the-executor)
 	* [Executor Work Guard](#executor-work-guard)
 * [Os Abstractions](#os-abstractions)
@@ -126,7 +131,7 @@ int main(int argc, const char* argv[])
 
 The ability to effectively manage and execute asynchronous tasks is crucial for building responsive, efficient, and scalable systems. The **Task Composition** feature avaiable in `ASRT V1.2.0` allows you to easily define, chain, and manage tasks with fine-grained control over execution flow and call dependencies. 
 
-### Understanding Task Composition
+### Understanding Task Composability
 
 **Task Composition** refers to the process of combining multiple tasks into a single, cohesive operation where each task can build upon the result of the previous one. Suppose we have two tasks: Task A and Task B and we want to combine them in to a new task called Task C such that when Task C is executed, it invokes TaskA and TaskB sequentially, in that order. 
 
