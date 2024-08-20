@@ -3,6 +3,38 @@
 
 `ASRT` is a header-only C++ **concurrency/networking** library that makes writing performant and safe embedded applications a breeze.  Implementations of a task scheduler and C++ abstractions for posix objects like sockets and pipes are provided out of the box. If you are comfortable with C++11 or above and have written networking applications, you are good to go! No more awkward wrappers over raw system calls and manual event loops in your otherwise structured (I hope) C++ program. 
 
+## New in V1.2.0!
+Now you can [compose tasks](#task-composition) before scheduling them for execution! See below for a sneak peek of this new feature.
+
+```c++
+#include <iostream>
+#include <asrt/asrt.hpp>
+#include <asrt/composable_task.hpp>
+
+int main() {
+
+	// Compose tasks using the then() method
+	auto cpmposed_task = asrt::Task{[] {
+		std::cout << "Task 1 executed." << std::endl;
+		return 42;
+	}).then([](int value) {
+		std::cout << "Task 2 executed with value: " << value << std::endl;
+		return value * 2;
+	}).then([](int value) {
+		std::cout << "Task 3 executed with value: " << value << std::endl;
+	}};
+
+	// Post the composed task to the global default scheduler
+	asrt::Post(std::move(composedTask));
+
+	// The composed task will be executed here
+	asrt::Run();
+
+	return 0;
+}
+```
+Please refer to the [Task Composition](#task-composition) section for a detailed introduction to the various ways to express dependency relationships between tasks and the underlying implementation that makes this possible, 
+
 ## Table of Contents
 * [Why Another Task Scheduling Library?](#why-another-task-scheduling-library)
 * [Architecture Overview](#architecture-overview)
@@ -10,6 +42,7 @@
 	* [Asynchrony/Concurrency](#asynchronyconcurrency)
 	* [Application Prototypes](#application-prototypes)
 * [Task Scheduling](#task-scheduling)
+	* [Task Composition](#task-composition)
 	* [The Executor](#the-executor)
 	* [Executor Work Guard](#executor-work-guard)
 * [Os Abstractions](#os-abstractions)
@@ -70,7 +103,7 @@ int user_task_func()
 
 int main(int argc, const char* argv[])
 {	
-    // post the function pointer to the executor for immediate execution
+    // post the function pointer to the gloabl default executor for immediate execution
     asrt::post(user_task_func);
 
     // schedule the lambda for delayed execution
@@ -83,10 +116,282 @@ int main(int argc, const char* argv[])
     asrt::post_periodic(user_task_func, 42ms);
 	
 	// run the executor on separate thread. This is where tasks will be executed.
-	std::thread t{[]{asrt::DefaultExecutor()->Run()}}；
+	std::thread t{[]{ asrt::Run(); }}；
 	t.join();
 }
 ```
+
+## Task Composition
+
+
+The ability to effectively manage and execute asynchronous tasks is crucial for building responsive, efficient, and scalable systems. The **Task Composition** feature avaiable in `ASRT V1.2.0` allows you to easily define, chain, and manage tasks with fine-grained control over execution flow and call dependencies. 
+
+### Understanding Task Composition
+
+**Task Composition** refers to the process of combining multiple tasks into a single, cohesive operation where each task can build upon the result of the previous one. Suppose we have two tasks: Task A and Task B and we want to combine them in to a new task called Task C such that when Task C is executed, it invokes TaskA and TaskB sequentially, in that order. 
+
+```mermaid
+graph LR
+C[Task C] --> A[Task A]
+A --> B[Task B]
+B --> D[End]
+```
+Suppose Task A returns a value. Now Task B can work with that value and it too can return a value for the next Task to work with.  This is akin to creating an execution pipeline where the output of one task becomes the input of the next. Task composition is invaluable in scenarios where complex workflows need to be broken down into smaller, manageable units that can be executed sequentially or conditionally, based on the needs of the application.
+
+In `ASRT`,  task composition is simplified through an intuitive interface that allows tasks to be chained together using **composers** like `let(), then(), split(), etc.` and the pipe operator `|`. 
+
+You can now write code like this
+```c++
+	auto task = just(42)
+	| then([](int value) { return value * 2; })
+	| then([](int value) { return value + 42; }}
+	| then([](int value) { return value / 3; }}
+	| then([](int value) { return value; }};
+```
+
+This not only makes the code more readable but also ensures that tasks are executed in the correct order, with minimal overhead.
+
+###  Task Dependencies
+
+**Task dependencies** describe the relationships between tasks where the execution of one task depends on the side-effects of another. For example, in a data processing pipeline, Task B might need to wait for the result of Task A before it can proceed. You can express these dependency relationships in `ASRT` using **composer functions** such as  `then_if` (conditional continuation), `when_all` ( parallel task execution), or even alternative execution paths based on runtime conditions. Let's explore some of these dependency relationships between tasks and how to express them in code. 
+
+####  **Sequential Composition**
+
+In this scenario, Task B depends on Task A, and Task C depends on Task B.
+
+```mermaid
+
+graph LR
+
+A[Task A] --> B[Task B]
+
+B --> C[Task C]
+
+```
+- **Example**
+Lets's compose a task based on the above call dependency.
+
+```c++
+	Task task_a{};
+	Task task_b{};
+	Task task_c{};
+	
+	auto composed_task = just(42）
+		| let([](int value) { return value * 2; })
+		| let([](int value) { return value + 42; }}
+		| let([](int value) { return value / 3; }}
+		| let([](int value) { return value; }};
+```
+
+#### Conditional Continuation 
+
+Here, Task B is executed only if a condition based on the result of Task A is met.
+
+```mermaid
+
+graph LR
+
+A[Task A] --> B{Condition Met?}
+
+B -->|Yes| C[Task B]
+
+B -->|No| D[End]
+
+```
+- **Example**
+```cpp
+auto task_a = just(42);
+
+//the condition does not depend on task_a's result
+auto task_b = task_a 
+	| if_then([] { return true; }, 
+		[](int value) {
+			//this will be executed since condition is satisfied
+			return value * 2;
+		});
+
+//the condition depends on task_a's result
+auto task_b = task_a
+	| then_if([] (int result) { return result > 100; }, 
+		[](int value) {
+			//this will never be executed since condition is not satisfied
+			return value * 2;
+		});
+```
+#### Conditional Execution (Example 2)
+Now, either Task B or Task C will be executed based on the condition.
+
+```mermaid
+
+graph LR
+
+A[Task A] --> B{Condition Met?}
+
+B -->|Yes| C[Task B]
+
+B -->|No| D[Task C]
+
+```
+- **Example**
+```cpp
+auto task_a = just(42);
+
+//the condition does not depend on task_a's result
+auto task_b = task_a |
+	if_then_else([] { return true; }, 
+		[](int value) {
+			//this will always be executed since condition is always satisfied
+			return value * 2;
+		},
+		[](int value) {
+			//this will never be executed
+			return value / 2;
+		});
+	
+//the condition depends on task_a's result
+auto task_b = task_a
+	| then_if_else([] (int result) { return result > 100; }, 
+		[](int value) {
+			//this will always be executed since condition is always satisfied
+			return value * 2;
+		},
+		[](int value) {
+			//this will never be executed
+			return value / 2;
+		});
+```
+
+#### Parallel Execution
+
+Executes multiple tasks in parallel and continues once all tasks have completed. The result is a tuple of all the results.
+
+```mermaid
+
+graph TD
+
+A[Task A] --> Z[Combine Results]
+
+B[Task B] --> Z
+
+C[Task C] --> Z
+
+Z --> D[Combined Result]
+
+```
+- **Example**
+```cpp
+auto combinedTask = when_all(task_a, task_b, task_c) 
+	| then([](auto results) {
+		// Process results from all tasks
+	});
+```
+
+#### First Completed Task
+
+ Executes multiple tasks in parallel and continues as soon as the first task completes. The result is the result of the first completed task.
+
+```mermaid
+
+graph LR
+
+A[Task A] --> Z[Continue with first completed]
+
+B[Task B] --> Z
+
+C[Task C] --> Z
+
+```
+
+- **Example**:
+
+```cpp
+auto firstTask = when_any(task_a, task_b, task_c)
+	| then([](auto result) {
+	    // Process the result of the first completed task
+	});
+```
+
+#### Complex Dependencies
+
+Suppose we want to execute Task A then Task B and Task C, and finally Task D, but only after Task B and C completes execution.
+
+```mermaid
+
+graph TD
+
+A[Task A] --> B[Task B]
+
+A --> C[Task C]
+
+B --> D[Task D]
+
+C --> D
+
+```
+- **Example**
+```cpp
+auto task = just(42)
+	| split(
+		[](int value) { return 42 / 2; },
+		[](int value) { return 42 * 2; }
+	)
+	| when_all([](auto values){
+		auto [val_b, val_c] = values;
+		return val_c - val_b * 2;
+	});
+```
+#### 7. **Delayed Execution
+
+```mermaid
+
+graph LR
+
+A[Task A] --> D[Delay] --> B[Task B]
+
+```
+- **Example**
+
+#### Cancellation 
+
+```mermaid
+
+graph TD
+
+A[Task A] --> B[Task B]
+
+C[Task C completes first] --> Z[Cancel Task B]
+
+B -.->|If C completes first| Z
+
+```
+- **Example**
+
+
+
+
+### Building Compile-Time Call Graphs
+
+One of the most powerful aspects of task composition is the ability to **build call graphs at compile time**. A call graph represents the sequence and dependencies of function calls in a program. By constructing these graphs at compile time, powerful compile time optimizations are enabled, such as eliminating unnecessary runtime checks, improving execution speed, and reducing memory usage.
+
+With our `constexpr`-friendly implementation, tasks can be composed and evaluated at compile time. This means that in certain scenarios, entire task chains can be resolved before your program even runs, leading to highly efficient execution with predictable performance characteristics. This is particularly useful in embedded systems or performance-critical applications where every cycle counts.
+
+### Why These Features Matter
+
+The ability to compose tasks, manage dependencies, and optimize execution at compile time offers several key benefits:
+
+- **Improved Readability and Maintainability**: Task composition provides a clear, linear way to express complex workflows, making your code easier to read and maintain.
+
+- **Deterministic Execution**: By explicitly defining dependencies, you ensure that tasks execute in the correct order, reducing bugs and unpredictable behavior.
+
+- **Performance Optimization**: Compile-time call graphs and `constexpr` task chains eliminate runtime overhead, resulting in faster, more efficient code.
+
+- **Scalability**: As your system grows, these features allow you to manage increasingly complex task interactions without sacrificing performance.
+
+#### Brief Overview of the Implementation
+
+The composability feature in our scheduler is implemented using a `ComposableTask` class, which supports chaining operations through operator overloading (e.g., the `|` operator for continuations). Each `ComposableTask` object represents a callable that can be composed with others to form a task chain. These tasks are `constexpr` friendly, allowing for compile-time optimization when possible.
+
+To handle dependencies, we offer a suite of functions like `then_if`, `when_all`, and `schedule_after`, which allow you to express complex execution flows with minimal boilerplate. Additionally, our use of templates ensures that these tasks can be evaluated at compile time, leading to efficient, optimized execution in your final application.
 
 ### The Executor
 The `asrt::Executor` is a core abstraction of the `ASRT` library. It handles task submission, task scheduling and task execution. By default, the first time when you call the `asrt::Post() ` API, a default global `asrt::Executor` instance is created and you can interact with this executor through global APIs like `asrt::GetDefaultExecutor()` and `asrt::PostDeferred()`. However, you may not always want a singleton executor lying around in your program. You can always create a local executor at block scope and pass its reference to any `ASRT` objects that require it. 
@@ -354,4 +659,3 @@ Currently, the library requires a C++17-capable compiler. Work in currently unde
 There are different ways to integrate the library into your existing project. The easiet way is simply copying the `asrt/` subfolder into your `include/` or `lib/`directory. 
 
 An example of integration with CMake is given in the `examples/` folder.
-
