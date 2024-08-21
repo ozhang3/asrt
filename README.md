@@ -318,7 +318,7 @@ auto firstTask = when_any(task_a, task_b, task_c)
 
 #### Complex Dependencies
 
-Suppose we want to execute Task A then Task B and Task C, and finally Task D, but only after Task B and C completes execution.
+Suppose we want to start with Task A then launch Task B and Task C in parralel, and finally finish with Task D, but only after Task B and C completes execution.
 
 ```mermaid
 
