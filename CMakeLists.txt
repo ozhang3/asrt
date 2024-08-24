@@ -177,7 +177,7 @@ set(INSTALL_DESTINATION ${INSTALL_DIRECTORY}/lib/$<IF:$<BOOL:${CROSS_COMPILE_FOR
 
 if(LIBASRT_BUILD_EXAMPLE)
     message(STATUS "Building examples...")
-    add_subdirectory(example)
+    add_subdirectory(examples)
 endif()
 
 # ---------------------------------------------------------------------------------------
