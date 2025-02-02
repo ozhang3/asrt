@@ -70,7 +70,7 @@ socket/basic_endpoint.hpp, code is 56, comment is 11, blank is 18.
 socket/basic_packet_socket.hpp, code is 381, comment is 61, blank is 105.
 socket/basic_socket.hpp, code is 603, comment is 130, blank is 120.
 socket/basic_stream_socket.hpp, code is 535, comment is 147, blank is 114.
-socket/datagram_socket.hpp, code is 283, comment is 33, blank is 61.
+socket/basic_datagram_socket.hpp, code is 283, comment is 33, blank is 61.
 socket/impl/acceptor_socket.ipp, code is 172, comment is 11, blank is 25.
 socket/impl/packet_socket.ipp, code is 328, comment is 27, blank is 69.
 socket/impl/stream_socket.ipp, code is 124, comment is 9, blank is 16.
@@ -88,7 +88,7 @@ sys/epoll_wrapper.hpp, code is 132, comment is 10, blank is 25.
 sys/io_uring_wrapper.hpp, code is 7, comment is 0, blank is 11.
 sys/syscall.hpp, code is 761, comment is 355, blank is 181.
 thread_pool/static_thread_pool.hpp, code is 85, comment is 2, blank is 26.
-timer/basic_timer.hpp, code is 137, comment is 60, blank is 44.
+timer/basic_waitable_timer.hpp, code is 137, comment is 60, blank is 44.
 timer/null_timer.hpp, code is 10, comment is 0, blank is 5.
 timer/steady_timer.hpp, code is 12, comment is 0, blank is 4.
 timer/timer_queue.hpp, code is 344, comment is 120, blank is 81.

@@ -16,7 +16,7 @@ template class Socket::BasicStreamSocket<ProtocolNS::TCP, ExecutorNS::IO_Executo
 template class Socket::BasicAcceptorSocket<ProtocolNS::TCP, ExecutorNS::IO_Executor<ReactorNS::EpollReactor>>;
 template class IP::BasicEndpoint<ProtocolNS::TCP>;
 
-namespace ip::tcp{
+namespace asrt::ip::tcp{
 
 using DefaultReactor = ReactorNS::EpollReactor;
 using DefaultExecutor = ExecutorNS::IO_Executor<DefaultReactor>;
@@ -30,14 +30,12 @@ using reuse_addr = Socket::SocketBase::ReuseAddress;
 using port = endpoint::PortNumber;
 
 
-static inline constexpr auto 
-v4() noexcept -> ProtocolType
+inline constexpr ProtocolType v4() noexcept
 {
     return ProtocolType{AF_INET};
 }
 
-static inline constexpr auto 
-v6() noexcept -> ProtocolType
+inline constexpr ProtocolType v6() noexcept
 {
     return ProtocolType{AF_INET6};
 }

@@ -1,7 +1,7 @@
 #ifndef F33AF3B3_329B_414E_A871_DF327079C4C2
 #define F33AF3B3_329B_414E_A871_DF327079C4C2
 
-#include "asrt/datagram_socket.hpp"
+#include "asrt/basic_datagram_socket.hpp"
 #include "asrt/basic_stream_socket.hpp"
 #include "asrt/protocol.hpp"
 #include "asrt/acceptor.hpp"

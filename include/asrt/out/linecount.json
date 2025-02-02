@@ -382,7 +382,7 @@
                     "blank": 61,
                     "code": 283,
                     "comment": 33,
-                    "filename": "socket/datagram_socket.hpp"
+                    "filename": "socket/basic_datagram_socket.hpp"
                 },
                 {
                     "blank": 25,
@@ -490,7 +490,7 @@
                     "blank": 44,
                     "code": 137,
                     "comment": 60,
-                    "filename": "timer/basic_timer.hpp"
+                    "filename": "timer/basic_waitable_timer.hpp"
                 },
                 {
                     "blank": 5,

@@ -18,7 +18,7 @@ using namespace std::chrono_literals;
 
 // constexpr auto a = sizeof(timer);
 
-void set_timer(SteadyTimer<udp::Executor>& timer)
+void set_timer(SteadyTimer& timer)
 {
     timer.WaitAsync(2s, [&timer](){ 
         spdlog::info("timer expired, rearming...");
@@ -32,7 +32,7 @@ int main() {
 
     spdlog::set_level(spdlog::level::trace);
 
-    udp::Executor executor;
+    udp::executor executor;
 
     SteadyTimer timer{executor};
 
