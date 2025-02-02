@@ -3,7 +3,7 @@
 
 #include "asrt/config.hpp"
 #include "asrt/socket/basic_stream_socket.hpp"
-#include "asrt/socket/datagram_socket.hpp"
+#include "asrt/socket/basic_datagram_socket.hpp"
 #include "asrt/socket/acceptor.hpp"
 #include "asrt/socket/protocol.hpp"
 #include "asrt/socket/unix_domain_endpoint.hpp"
