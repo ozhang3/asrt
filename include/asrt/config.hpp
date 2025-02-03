@@ -45,7 +45,7 @@
 
 // Default to a header-only implementation. The user must specifically request
 // separate compilation by defining either ASRT_COMPILED_LIB or
-// ASRT_DYN_LIB (as a DLL/shared library implies separate compilation).
+// ASRT_SHARED_LIB (as a DLL/shared library implies separate compilation).
 #if !defined(ASRT_HEADER_ONLY)
 # if !defined(ASRT_COMPILED_LIB)
 #  if !defined(ASRT_SHARED_LIB)
@@ -53,6 +53,31 @@
 #  endif // !defined(ASRT_SHARED_LIB)
 # endif // !defined(ASRT_COMPILED_LIB)
 #endif // !defined(ASRT_HEADER_ONLY)
+
+// Generic helper definitions for shared library support
+#if defined _WIN32 || defined __CYGWIN__
+#   define ASRT_DLL_IMPORT __declspec(dllimport)
+#   define ASRT_DLL_EXPORT __declspec(dllexport)
+#else
+    #define ASRT_DLL_IMPORT __attribute__((visibility ("default")))
+    #define ASRT_DLL_EXPORT __attribute__((visibility ("default")))
+#endif
+
+#ifdef ASRT_HEADER_ONLY
+#   define ASRT_INLINE inline
+#   define ASRT_API
+#else
+#   define ASRT_INLINE
+#   if defined(ASRT_SHARED_LIB)
+#       if defined(ASRT_EXPORTS)
+#           define ASRT_API ASRT_DLL_EXPORT
+#       else
+#           define ASRT_API ASRT_DLL_IMPORT
+#       endif
+#   else
+#       define ASRT_API
+#   endif
+#endif
 
 #ifdef APPLICATION_IS_SINGLE_THREADED
     #define DSISABLE_LOCKING_EXECUTOR_REACTOR_UNSAFE

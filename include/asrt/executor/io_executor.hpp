@@ -501,7 +501,7 @@ private:
 }
 
 #if defined(ASRT_HEADER_ONLY)
-# include "asrt/executor/impl/io_executor.ipp"
+# include "asrt/impl/io_executor.ipp"
 #endif // defined(ASRT_HEADER_ONLY)
 
 

@@ -144,13 +144,15 @@ namespace Socket
             return uaddr;
         }
 
-        inline auto 
+        inline constexpr auto 
         MakeUnspecUnixSockAddress(void) -> UnixSockAddrType
         {
             UnixSockAddrType uaddr;
             uaddr.sun_family = AF_UNSPEC;
             return uaddr;
         }
+
+        inline constexpr UnixSockAddrType kUnspecUnixSockAddress{MakeUnspecUnixSockAddress()};
 
         constexpr inline auto 
         MakePacketSockAddr(int if_index, unsigned short eth_type = ETH_P_ALL) -> PacketSockAddrType

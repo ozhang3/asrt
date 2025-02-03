@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <utility>
 #include <functional>
+#include <spdlog/fmt/bin_to_hex.h>
 
 #include "asrt/util.hpp"
 #include "asrt/error_code.hpp"

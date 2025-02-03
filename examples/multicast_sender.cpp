@@ -12,15 +12,15 @@ using Timer::SteadyTimer;
 using Timer::SteadyPeriodicTimer;
 using namespace std::chrono_literals;
 
-// udp::Executor executor;
+// udp::executor executor;
 
 // SteadyTimer timer{executor, 2s};
 
 // constexpr auto a = sizeof(timer);
 
-void set_timer(SteadyTimer& timer)
+void set_timer(Timer::BasicWaitableTimer<std::chrono::_V2::steady_clock, ExecutorNS::IO_Executor<ReactorNS::EpollReactor>, Timer::TimerMode::kOneShot>& timer)
 {
-    timer.WaitAsync(2s, [&timer](){ 
+    timer.WaitAsync([&timer](){ 
         spdlog::info("timer expired, rearming...");
         //timer.ExpiresAfter(1s);
         set_timer(timer);
@@ -34,18 +34,18 @@ int main() {
 
     udp::executor executor;
 
-    SteadyTimer timer{executor};
+    SteadyTimer timer{executor, 2s};
 
-    SteadyPeriodicTimer timerp{executor, 2s};
+    //SteadyPeriodicTimer timerp{executor, 2s};
 
     set_timer(timer);
 
-    timerp.WaitAsync([&timerp]() mutable { 
-        std::chrono::milliseconds const init_period{200};
-        static int counter{};
-        spdlog::info("Periodic timer expired");
-        timerp.SetPeriod(init_period * ++counter);
-    });
+    // timerp.WaitAsync([&timerp]() mutable { 
+    //     std::chrono::milliseconds const init_period{200};
+    //     static int counter{};
+    //     spdlog::info("Periodic timer expired");
+    //     timerp.ExpiresAfter(init_period * ++counter);
+    // });
 
     executor.Run();
 

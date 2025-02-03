@@ -286,7 +286,7 @@ AcceptAsyncInternal(
 }//end ns
 
 #if defined(ASRT_HEADER_ONLY)
-# include "asrt/socket/impl/acceptor_socket.ipp"
+# include "asrt/impl/basic_acceptor_socket.ipp"
 #endif // defined(ASRT_HEADER_ONLY)
 
 #endif /* BB654D12_3FB5_46D6_A4B0_F42DC3240883 */

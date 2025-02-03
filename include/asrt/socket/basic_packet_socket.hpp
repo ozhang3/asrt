@@ -529,7 +529,7 @@ private:
 } //end namespace
 
 #if defined(ASRT_HEADER_ONLY)
-# include "asrt/socket/impl/packet_socket.ipp"
+# include "asrt/impl/basic_packet_socket.ipp"
 #endif // defined(ASRT_HEADER_ONLY)
 
 #endif /* D396B89B_946C_4B0C_A315_8EBFC474DA9B */

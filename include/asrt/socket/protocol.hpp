@@ -190,7 +190,7 @@ struct TCP : Protocol<TCP>
     /**
      * @param protocol_family AF_INET / AF_INET6
     */
-    constexpr explicit TCP(int protocol_family) noexcept : 
+    constexpr explicit TCP(int protocol_family = AF_INET) noexcept : 
         family_{protocol_family} {}
 
     int family_{AF_INET};
@@ -204,7 +204,8 @@ struct UDP : Protocol<UDP>
 {
     using Endpoint = IP::BasicEndpoint<UDP>;
     using AddressType = const char*;
-    constexpr explicit UDP(int protocol_family) noexcept : family_{protocol_family} {}
+    constexpr explicit UDP(int protocol_family = AF_INET) noexcept 
+        : family_{protocol_family} {}
 
     int family_;
     static constexpr int type_{SOCK_DGRAM};

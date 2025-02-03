@@ -76,7 +76,7 @@ private:
 }
 
 #if defined(ASRT_HEADER_ONLY)
-# include "asrt/client_server/impl/client_interface.ipp"
+# include "asrt/impl/client_interface.ipp"
 #endif // defined(ASRT_HEADER_ONLY)
 
 #endif /* D3463D7C_ED08_433F_A558_331B68FAC66B */

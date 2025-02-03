@@ -127,7 +127,7 @@ DoReceiveSync(ReceiveBuffer recv_view, int flags) noexcept -> ReceiveResult
 }
 
 /* explicit instantiations for async send/recv/connect operations */
-template class AsyncOperation<
+ASRT_INLINE template class AsyncOperation<
         OperationType::kSend,
         SendBuffer,
         SendResult,
