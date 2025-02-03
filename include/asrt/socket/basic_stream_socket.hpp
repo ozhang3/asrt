@@ -825,7 +825,7 @@ struct fmt::formatter<Socket::PeerCredentials> : fmt::formatter<int>
 };
 
 #if defined(ASRT_HEADER_ONLY)
-# include "asrt/socket/impl/stream_socket.ipp"
+# include "asrt/impl/basic_stream_socket.ipp"
 #endif // defined(ASRT_HEADER_ONLY)
 
 

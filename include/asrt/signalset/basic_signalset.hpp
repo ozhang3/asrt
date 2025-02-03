@@ -191,7 +191,7 @@ private:
 
 
 #if defined(ASRT_HEADER_ONLY)
-# include "asrt/signalset/impl/basic_signalset.ipp"
+# include "asrt/impl/basic_signalset.ipp"
 #endif // defined(ASRT_HEADER_ONLY)
 
 #endif /* A4E61F3A_3189_42F3_83B2_FE8817537D3F */

@@ -61,7 +61,7 @@ private:
 }
 
 #if defined(ASRT_HEADER_ONLY)
-# include "asrt/executor/impl/strand.ipp"
+# include "asrt/impl/strand.ipp"
 #endif // defined(ASRT_HEADER_ONLY)
 
 #endif /* D4D22DAB_A4AD_4790_9E1D_1ABA8EA1F081 */
